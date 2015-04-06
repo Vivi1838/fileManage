@@ -4,10 +4,10 @@ function directory_size($dir){
     if($dh = opendir($dir)) {
         while (($filename = readdir($dh)) != false) {
             if ($filename != '.' && $filename != '..') {
-                if (is_file($dir . PATH_SEPARATOR . $filename))
-                    $directorySize += filesize($dir . PATH_SEPARATOR . $filename);
-                if (is_dir($dir . PATH_SEPARATOR . $filename))
-                    $directorySize += directory_size($dir . PATH_SEPARATOR . $filename);
+                if (is_file($dir . DIRECTORY_SEPARATOR . $filename))
+                    $directorySize += filesize($dir . DIRECTORY_SEPARATOR . $filename);
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $filename))
+                    $directorySize += directory_size($dir . DIRECTORY_SEPARATOR . $filename);
             }
         }
         closedir($dh);

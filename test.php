@@ -1,6 +1,6 @@
 <?php
-define("DEFAULT_DIR" , "E:/week8");
-//define("DEFAULT_DIR" , "/Users/liujin834/work/vivi/fileManager");
+//define("DEFAULT_DIR" , "E:/week8");
+define("DEFAULT_DIR" , "/Users/liujin834/work/vivi/fileManager");
 if(!file_exists(DEFAULT_DIR))
     throw new \RuntimeException("Directory not set");
 ?>
@@ -56,14 +56,14 @@ if(!file_exists(DEFAULT_DIR))
                 if ($file == ".")
                     echo "当前目录：" . getcwd() . "<br/>";
                 elseif ($file == "..") {
-                    $dir = getcwd() . "\\..";                   //上级目录
+                    $dir = getcwd() . DIRECTORY_SEPARATOR . "..";                   //上级目录
                     echo "<a href=$php_self?dir=$dir>上级目录</a><br/>";
                 } else {
-                    $dir = getcwd() . "\\$file";                 //子目录
+                    $dir = getcwd() . DIRECTORY_SEPARATOR . "$file";                 //子目录
                     echo "<a href=$php_self?dir=$dir>$file</a><br/>";
                 }
             } else {
-                $dir = getcwd() . "\\";
+                $dir = getcwd() . DIRECTORY_SEPARATOR;
                 $name = urlencode($file);
                 $file = iconv("gb2312", "utf-8", $file);
                 echo "<a href=download.php?file_dir=$dir&file_name=$name>$file</a><br/>";
@@ -72,7 +72,7 @@ if(!file_exists(DEFAULT_DIR))
                 if($file == ".." || $file == '. ')
                     $file_size = "----";
                 else
-                    $file_size = round(directory_size(getcwd() . "\\$file") / 1048576, 2) . "MB";
+                    $file_size = round(directory_size(getcwd() . DIRECTORY_SEPARATOR . $file) / 1048576, 2) . "MB";
             }
             else {
                 $file_size = round(filesize($file) / 1024);
@@ -86,7 +86,7 @@ if(!file_exists(DEFAULT_DIR))
             echo "<td align='center' valign='middle'>$update_time</td>";
             if($file == "." || $file == "..") echo "<td align='center' valign='middle'>----</td>";
             else {
-                $path = getcwd() . "\\$file";
+                $path = getcwd() . DIRECTORY_SEPARATOR . $file;
                 echo "<td align='center' valign='middle'><a href=delete.php?dir=$path>删除</a></td>";
             }
         }
