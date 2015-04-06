@@ -1,3 +1,9 @@
+<?php
+define("DEFAULT_DIR" , "E:/week8");
+//define("DEFAULT_DIR" , "/Users/liujin834/work/vivi/fileManager");
+if(!file_exists(DEFAULT_DIR))
+    throw new \RuntimeException("Directory not set");
+?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -7,27 +13,27 @@
     <title>文件浏览</title>
 
     <!-- Bootstrap -->
-    <link href="./dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/lib/bootstrap-3.3.2-dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-    <script src="./dist/js/html5shiv.min.js"></script>
-    <script src="./dist/js/respond.min.js"></script>
+    <script src="/lib/html5shiv.min.js"></script>
+    <script src="/lib/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>
 <h1 class="text-center">文件浏览</h1>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="./dist/js/jquery.min.js"></script>
+<script src="/lib/jquery/jquery-1.11.2.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="./dist/js/bootstrap.min.js"></script>
+<script src="/lib/bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
 
 <div align="center">
-    <table width="400" height="28" class="table table-bordered" align="center">
+    <table width="400" height="28" class="table table-bordered table-striped" align="center">
         <thead>
-        <tr bgcolor="#a9a9a9">
+        <tr>
             <th width="80" height="15" class="text-center">文件名称</th>
             <th width="50" class="text-center">大小</th>
             <th width="80" class="text-center">创建时间</th>
@@ -36,10 +42,10 @@
         </tr>
         </thead>
         <?php
-        include_once "size.php";
+        include_once "./size.php";
         $php_self = $_SERVER['PHP_SELF'];          //获取当前脚本
         if(!isset($_GET['dir']) || empty($_GET['dir']))
-            $dir = "E:/week8";                     //默认指定目录
+            $dir = DEFAULT_DIR;                     //默认指定目录
         else
             $dir = $_GET['dir'];
         chdir($dir);                                 //改变当前目录
@@ -63,7 +69,7 @@
                 echo "<a href=download.php?file_dir=$dir&file_name=$name>$file</a><br/>";
             }
             if(is_dir($file)) {
-                if($file == "..")
+                if($file == ".." || $file == '. ')
                     $file_size = "----";
                 else
                     $file_size = round(directory_size(getcwd() . "\\$file") / 1048576, 2) . "MB";
