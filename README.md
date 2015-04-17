@@ -35,12 +35,22 @@ sudo vim /etc/hosts
 127.0.0.1     filemanager
 ```
 
-如果是从公网访问，将域名解析到本地主机的IP地址。
+如果是从公网访问，将域名解析新的A记录到本地主机的IP地址。
 
 配置好访问域名后，如果使用Apache2.4
 ```shell
-
+<VirtualHost *:80>
+        DocumentRoot "/path/to/fileManage"
+        ServerName filemanager
+        <Directory "/path/to/fileManage">
+                Options FollowSymLinks Multiviews
+                MultiviewsMatch Any
+                AllowOverride All
+                Require all granted
+        </Directory>
+</VirtualHost>
 ```
+如果有域名，请将ServerName替换为您的域名，不过不推荐直接在公网访问，如果必须公网访问建议添加apache权限验证
 
 Nginx 1.7
 ```shell
