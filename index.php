@@ -1,6 +1,8 @@
 <?php
-//define("DEFAULT_DIR" , "E:/week8");
-define("DEFAULT_DIR" , "/Users/liujin834/work/vivi/fileManager");
+define("DEFAULT_DIR" , "E:/week8");
+define("MB",1048576);
+define("GB",1073741824);
+//define("DEFAULT_DIR" , "/Users/liujin834/work/vivi/fileManager");
 if(!file_exists(DEFAULT_DIR))
     throw new \RuntimeException("Directory not set");
 ?>
@@ -20,6 +22,14 @@ if(!file_exists(DEFAULT_DIR))
     <!--[if lt IE 9]>
     <script src="/lib/html5shiv.min.js"></script>
     <script src="/lib/respond.min.js"></script>
+    <script src="/lib/jquery/jquery-1.11.2.min.js"></script>
+    <script src="/lib/jquery/jquery.colorbox.js"></script>
+    <script>
+        $(document).ready(function(){
+            //元素调用Colorbox的示例
+            $(".group1").colorbox({ rel: 'group1' });
+        });
+    </script>
     <![endif]-->
 </head>
 <body>
@@ -29,6 +39,7 @@ if(!file_exists(DEFAULT_DIR))
 <script src="/lib/jquery/jquery-1.11.2.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/lib/bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
+
 
 <div align="center">
     <table width="400" height="28" class="table table-bordered table-striped" align="center">
@@ -42,7 +53,18 @@ if(!file_exists(DEFAULT_DIR))
         </tr>
         </thead>
         <?php
+        function count_size($bit)
+        {
+            $type = array('Bytes','KB','MB','GB','TB');
+            for($i = 0; abs($bit) >= 1024; $i++)//单位每增大1024，则单位数组向后移动一位表示相应的单位
+            {
+                $bit/=1024;
+            }
+            return abs(floor($bit*100)/100).$type[$i];//floor是取整函数，为了防止出现一串的小数，这里取了两位小数
+        }
+
         include_once "./size.php";
+        include_once "./image.php";
         $php_self = $_SERVER['PHP_SELF'];          //获取当前脚本
         if(!isset($_GET['dir']) || empty($_GET['dir']))
             $dir = DEFAULT_DIR;                     //默认指定目录
@@ -66,18 +88,19 @@ if(!file_exists(DEFAULT_DIR))
                 $dir = getcwd() . DIRECTORY_SEPARATOR;
                 $name = urlencode($file);
                 $file = iconv("gb2312", "utf-8", $file);
+                if(isImage($file))
+                    echo "<a href=pic.php?file_dir=$dir&file_name=$name>$file</a><br/>";
+                else
                 echo "<a href=download.php?file_dir=$dir&file_name=$name>$file</a><br/>";
             }
             if(is_dir($file)) {
                 if($file == ".." || $file == '. ')
                     $file_size = "----";
-                else
-                    $file_size = round(directory_size(getcwd() . DIRECTORY_SEPARATOR . $file) / 1048576, 2) . "MB";
+                else $file_size = count_size(directory_size(getcwd() . DIRECTORY_SEPARATOR . $file));
             }
             else {
-                $file_size = round(filesize($file) / 1024);
-                if($file_size < 1) $file_size = 1;
-                $file_size .= "KB";
+                $file_size = count_size(filesize($file));
+
             }
             echo "<td align='center' valign='middle'>$file_size</td>";
             $create_time = date("y-m-d h:i:sA",filectime($file));
@@ -89,9 +112,23 @@ if(!file_exists(DEFAULT_DIR))
                 $path = getcwd() . DIRECTORY_SEPARATOR . $file;
                 echo "<td align='center' valign='middle'><a href=delete.php?dir=$path>删除</a></td>";
             }
+
         }
+        echo <<<END
+        </tr>
+        <tr>
+        <td colspan="5" align="center">
+            <form action="upload.php" method="post" enctype="multipart/form-data">
+                需要保存的路径：<input type="text" name="path">
+                <input type="hidden" name="MAX_FILE_SIZE" value="20480"/>
+                <input type="file" name="uploadFile" size="25" maxlength="100"/>
+                <input type="submit" value="上传">
+            </form>
+        </td>
+        </tr>
+END;
         closedir($handle);
-        ?>
+ ?>
     </table>
 </div>
 </body>
