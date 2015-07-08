@@ -2,7 +2,7 @@
 $dir = $_GET['file_dir'];
 $name = $_GET['file_name'];
 $file = $dir.$name;
-outputFile($file,"test.txt",'');
+outputFile($file,$name,'');
 
 /*function download($file_dir,$file_name){
     if(!file_exists($file_dir.$file_name))                     //检查文件是否存在
