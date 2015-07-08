@@ -1,5 +1,6 @@
 <?php
-define("DEFAULT_DIR" , "E:/week8");
+$ini_array = parse_ini_file("path.ini");
+define("DEFAULT_DIR",$ini_array['path1']);
 define("MB",1048576);
 define("GB",1073741824);
 //define("DEFAULT_DIR" , "/Users/liujin834/work/vivi/fileManager");
