@@ -52,8 +52,46 @@ sudo vim /etc/hosts
 ```
 如果有域名，请将ServerName替换为您的域名，不过不推荐直接在公网访问，如果必须公网访问建议添加apache权限验证
 
-Nginx 1.7
+Nginx 1.9
 ```shell
+server {
+        listen 80;
+
+        root /path/to/fileManage;
+        index index.php index.html index.htm;
+
+        server_name filemanager;
+
+        location / { 
+                try_files $uri $uri/ /index.php?$args;
+        }
+
+        error_page 404 /404.html;
+
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /usr/share/nginx/html;
+        }
+        
+        location ~ .php$ {
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                #php-fpm配置需要根据本机情况调整
+                fastcgi_pass 127.0.0.1:9100;
+                fastcgi_index index.php;
+                fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+                include fastcgi_params;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+                expires 24h;
+                log_not_found off;
+        }
+}
 
 ```
 
